@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hello QueryDSL</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+    <h1>Hello QueryDSL</h1>
+    <table th:object="${model}">
+        <thead>
+            <tr>
+                <th>id</th>
+                <th>name</th>
+                <th>created_at</th>
+                <th>created_by</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="row,rowStat : ${userList}">
+                <td th:text="${userList[__${rowStat.index}__].id}">
+                </td>
+                <td th:text="${userList[__${rowStat.index}__].name}">
+                </td>
+                <td
+                    th:text="${#temporals.format(userList[__${rowStat.index}__].createdAt, 'yyyy/MM/dd HH:mm:ss')}">
+                    2000/01/01 12:00:00
+                </td>
+                <td th:text="${userList[__${rowStat.index}__].createdBy}">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
