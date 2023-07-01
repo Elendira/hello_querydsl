@@ -1,0 +1,25 @@
+// JPQLQueryFactory is OK
+QUser qUser = QUser.user;
+<User> userList = jpaQueryFactory.selectFrom(qUser).fetch();
+
+// SQLQueryFactory is NG
+QUser qUser = QUser.user;
+List<User> userList = sqlQueryFactory.select(qUser)
+           .from(qUser)
+           .fetch(); // error here
+
+2023-07-01T10:41:48.836+09:00 ERROR 94405 --- [nio-8081-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.jdbc.BadSqlGrammarException: null; bad SQL grammar [select user
+from user]] with root cause
+
+org.h2.jdbc.JdbcSQLSyntaxErrorException: SQLステートメントに文法エラーがあります "select user\000afrom [*]user"; 期待されるステートメント "identifier"
+Syntax error in SQL statement "select user\000afrom [*]user"; expected "identifier"; SQL statement:
+select user
+from user [42001-214]
+        at org.h2.message.DbException.getJdbcSQLException(DbException.java:502) ~[h2-2.1.214.jar:2.1.214]
+        at org.h2.message.DbException.getJdbcSQLException(DbException.java:477) ~[h2-2.1.214.jar:2.1.214]
+
+
+BAD SQL -> select user from user
+
+OK  SQL -> select user.* from user
+        or select user.id, user.name, user.created_at, user.created_by from user
