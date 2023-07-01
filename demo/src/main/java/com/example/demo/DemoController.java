@@ -20,8 +20,6 @@ public class DemoController {
     public String index(Model model) {
         List<User> userList = service.listing();
         model.addAttribute("userList", userList);
-        model.addAttribute("userName", "Ronald");
-        logger.info("userList="+userList.toString());
         return "index";
     }
     

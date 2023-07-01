@@ -1,0 +1,67 @@
+$ java -version
+openjdk version "17.0.6" 2023-01-17
+OpenJDK Runtime Environment Temurin-17.0.6+10 (build 17.0.6+10)
+OpenJDK 64-Bit Server VM Temurin-17.0.6+10 (build 17.0.6+10, mixed mode)
+
+ :: Spring Boot ::  (v3.1.1)
+
+CREATE TABLE login_user(
+    id INTEGER auto_increment PRIMARY KEY,
+    name VARCHAR(128) NOT NULL,
+    created_by    character varying(255) NOT NULL,
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+@Entity
+// QueryDSL ignores @Table(name) why?
+@Table(schema = User.SCHEMA_NAME, name = User.TABLE_NAME)
+@Data
+@QueryEntity
+public class User {
+    public static final String SCHEMA_NAME = "";
+    public static final String TABLE_NAME  = "login_user";
+
+    @Id
+    private Integer id;
+    private String  name;
+
+    // QueryDSL ignores @Column(name)
+    @Column(name="created_by")
+    private String createdBy;
+    @Column(name="created_at")
+    private LocalDateTime createdAt;
+}
+
+@Generated("com.querydsl.codegen.DefaultEntitySerializer")
+public class QUser extends EntityPathBase<User> {
+
+    private static final long serialVersionUID = 1634803301L;
+
+    public static final QUser user = new QUser("user");
+    // ---------------------------------------- ^^^^^ Why not "login_user"? 
+
+
+    public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
+    // ----------------------------------------------- ^^^^^ Why not "created_at"? 
+
+    public final StringPath createdBy = createString("createdBy");
+    // ---------------------------------------------- ^^^^^ Why not "created_by"? 
+
+    public final NumberPath<Integer> id = createNumber("id", Integer.class);
+
+    public final StringPath name = createString("name");
+
+    public QUser(String variable) {
+        super(User.class, forVariable(variable));
+    }
+
+    public QUser(Path<? extends User> path) {
+        super(path.getType(), path.getMetadata());
+    }
+
+    public QUser(PathMetadata metadata) {
+        super(User.class, metadata);
+    }
+
+}
+
