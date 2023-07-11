@@ -23,15 +23,15 @@ public class DemoService {
     @Transactional
     public List<User> listing() {
         QUser qUser = QUser.user;
-        // JPQLQueryFactory is OK
+        // JPQLQueryFactory
         List<User> userList = jpaQueryFactory.selectFrom(qUser).fetch();
         logger.info("JPQLQueryFactory: "+userList.toString());
 
-        // SQLQueryFactory is NG
-        userList = sqlQueryFactory.select(qUser)
-                .from(qUser)
+        // SQLQueryFactory
+        var userList2 = sqlQueryFactory.select(SLoginUser.loginUser.all())
+                .from(SLoginUser.loginUser)
                 .fetch(); // error here
-        logger.info("SQLQueryFactory: "+userList.toString());
+        logger.info("SQLQueryFactory: "+userList2.toString());
         return userList;
     }
 }

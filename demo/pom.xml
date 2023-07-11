@@ -89,7 +89,11 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<!-- <plugin>
+
+			<!-- JPQLQueryFactoryが参照するQUserを生成
+			     古いやり方。最新は指定しなくてもコンパイル時に自動生成されるが
+				 maven-compiler-pluginと同時に使用すると動作しないので指定が必要になる -->
+			<plugin>
 				<groupId>com.mysema.maven</groupId>
 				<artifactId>apt-maven-plugin</artifactId>
 				<version>1.1.3</version>
@@ -99,13 +103,61 @@
 							<goal>process</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>target/generated-sources/java</outputDirectory>
+							<outputDirectory>${project.basedir}/target/generated-sources/annotations</outputDirectory>
 							<processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin> -->
+			</plugin>
+
+			<!-- JPA Specificationが参照するUser_を生成 -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>1.5.5.Final</version>
+						</path>
+						<path>
+							<groupId>org.hibernate</groupId>
+							<artifactId>hibernate-jpamodelgen</artifactId>
+							<version>6.2.6.Final</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+
+			<!-- SQLQueryFactoryが参照するSUserを生成 -->
+			<plugin>
+				<groupId>com.querydsl</groupId>
+				<artifactId>querydsl-maven-plugin</artifactId>
+				<version>${querydsl.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>export</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<jdbcUrl>jdbc:h2:mem:;INIT=RUNSCRIPT FROM '${project.basedir}/src/main/resources/schema.sql'</jdbcUrl>
+					<jdbcDriver>org.h2.Driver</jdbcDriver>
+					<packageName>com.example.demo</packageName>
+					<targetFolder>${project.basedir}/target/generated-sources/java</targetFolder>
+					<namePrefix>S</namePrefix>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>com.h2database</groupId>
+						<artifactId>h2</artifactId>
+						<version>2.2.220</version>
+ 					</dependency>
+				</dependencies>
+			</plugin>  
 		</plugins>
 	</build>
-
 </project>
